@@ -1,0 +1,130 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@using Webdiyer.AspNetCore;
+
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    dynamic glst = ViewBag.lst;
+
+    var Content = ViewBag.Content;
+
+    var State = ViewBag.State;
+    int count = ViewBag.Count;
+    
+    int pageindex = ViewBag.pageindex;
+    int pagesize = ViewBag.pagesize;
+    var alst = new PagedList<dynamic>(glst, pageindex, pagesize, count);
+
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Work Order List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "workorder" })
+
+    <div class="container">
+        <div class="row">
+            <div style="float:left;padding:15px;">
+                <select class="form-control" id="syslst" name="syslst" style="display: inline-block;width:auto;">
+                    @foreach (var sys in syslst)
+                    {
+                        <!option value="@(sys.Cname)"
+                                 @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                            @(sys.Cname)
+                        </!option>
+                    }
+                </select>
+                <select class="form-control" id="State" name="State" style="display: inline-block;width:auto;">
+                    <!option value="1" @(State == "1" ? "selected" : "")>
+                        正在处理
+                    </!option>
+                    <!option value="9" @(State == "9" ? "selected" : "")>
+                        已关闭
+                    </!option> 
+                </select>
+
+
+
+                <input type="text" class="form-control" placeholder="请输工单内容" name="Content" id="Content" aria-label="Content" aria-describedby="addon-wrapping" style=" display: inline-block; width: 200px;" value="@Content" />
+
+                <button type="button" class="btn btn-primary" onclick="javascript: Search()">查询</button> 
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">编号</th>
+                            <th scope="col">问题内容</th>
+                            <th scope="col">反馈人</th>
+                            <th scope="col">创建时间</th>
+                            <th scope="col">状态</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (glst != null)
+                        {
+                            @foreach (var g in glst)
+                            {
+                        <tr>
+                            <td>@Project.GetDefaultVal(g, "Id")</td>
+                            <td title="@Project.GetDefaultVal(g, "Content")">@(Project.GetDefaultVal(g, "Content").Length>30?(Project.GetDefaultVal(g, "Content").Substring(0,30)+"..."): Project.GetDefaultVal(g, "Content"))</td>
+                            <td>@Project.GetDefaultVal(g, "Email")</td>
+                            <td>@Project.GetDefaultVal(g, "CreateTime").ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>@(Project.GetDefaultVal(g, "State").ToString() == "1"?"正在处理":"已关闭")</td>
+                            <td>
+                                <a href="javascript:Open('@Project.GetDefaultVal(g, "Id")')" target="_self">编辑</a> 
+                            </td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            Search();
+        });
+    });
+    function Search() {
+        window.location.replace("/WorkOrder/List?syslst=" + $("#syslst").val() + "&Content=" + $("#Content").val() + "&State=" + $("#State").val());
+    }
+    
+    function Open(id) {
+        window.open("/WorkOrder/Detail?cid=" + id + "&syslst=" + $("#syslst").val());
+    }
+   
+</script>
+
+</html>

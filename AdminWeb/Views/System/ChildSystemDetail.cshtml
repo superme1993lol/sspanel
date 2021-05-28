@@ -1,0 +1,101 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+    var cid = ViewBag.cid;
+    var Cname = ViewBag.Cname;
+    var Domain = ViewBag.Domain;
+    var SqlurlSs = ViewBag.SqlurlSs;
+    var SqlurlWeb = ViewBag.SqlurlWeb;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+s    <title>Child System Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "system" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm1" style="width:100%;">
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:150px;">系统名</span>
+                    </div>
+                    <input type="text" class="form-control" name="Cname" aria-label="输入系统名" placeholder="输入系统名" value="@Cname" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:150px;">域名</span>
+                    </div>
+                    <input type="text" class="form-control" name="Domain" aria-label="输入域名" placeholder="输入域名（请带上https）" aria-describedby="inputGroup-sizing-default" style="width:150px;" value="@(Domain)">
+                </div>
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:150px;">网页数据库</span>
+                    </div>
+                    <input type="text" class="form-control" name="SqlurlWeb" aria-label="输入网页数据库链接" placeholder="输入网页数据库链接" value="@SqlurlWeb" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:150px;">SS数据库</span>
+                    </div>
+                    <input type="text" class="form-control" name="SqlurlSs" aria-label="输入SS数据库链接" placeholder="输入SS数据库链接" value="@SqlurlSs" aria-describedby="inputGroup-sizing-default">
+                </div>
+                <input type="hidden" name="cid" value="@cid" />
+            </form>
+            </div>
+        <div class="row">
+            <div class="col" style="padding:5px;">
+                <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/System/ChildSystemList')">返回</button>
+            </div>
+         
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    function SubmitInfo() {
+        tPost("/System/ChildSystemDetailSubmit?" + Math.random(), $("#fm").serialize(), function (rt) {
+            debugger
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功", function () { window.location.href ="/System/ChildSystemList" });
+            }
+            return;
+        });
+         
+    }
+</script>
+
+</html>

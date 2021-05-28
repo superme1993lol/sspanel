@@ -1,0 +1,186 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@using Webdiyer.AspNetCore;
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    dynamic vlst = ViewBag.List;
+    var State = ViewBag.State;
+    int count = ViewBag.Count;
+    var Email = ViewBag.Email;
+    int pageindex = ViewBag.pageindex;
+    int pagesize = ViewBag.pagesize;
+    var alst = new PagedList<dynamic>(vlst, pageindex, pagesize, count);
+}
+@functions{
+    public string GetPayWay(int PayWay)
+    {
+        switch (PayWay)
+        {
+            case 1: return "已创建";
+            case 9: return "已完成";
+            case 10: return "已过期";
+            case 11: return "已取消";
+            default: return "未知";
+        }
+
+    }
+
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Payment List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "user" })
+
+    <div class="container">
+        <div class="row">
+            <div style="float:left;padding:15px;">
+
+                <select class="form-control" id="syslst" name="syslst" style="display: inline-block;width:auto;">
+                    @foreach (var sys in syslst)
+                    {
+                        <!option value="@(sys.Cname)"
+                                 @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                        @(sys.Cname)
+                        </!option>
+                    }
+                </select>
+
+
+                <select class="form-control" id="State" name="State" style="display: inline-block;width:auto;">
+                    <option value="">
+                        订单状态
+                    </option>
+                    <!option value="1" @(State == 1 ? "selected" : "")>
+                    已创建
+                    </!option>
+                    <!option value="9" @(State == 9 ? "selected" : "")>
+                    已完成
+                    </!option>
+                    <!option value="10" @(State == 10 ? "selected" : "")>
+                    已过期
+                    </!option>
+                    <!option value="11" @(State == 11 ? "selected" : "")>
+                    已取消
+                    </!option>
+                </select>
+
+                <input type="text" class="form-control" placeholder="注册邮箱" name="Email" id="Email" aria-label="Email" aria-describedby="addon-wrapping" style=" display: inline-block; width: 200px;" value="@Email" />
+
+                <div style="position: relative;display:inline-block;">
+                    <input type='text' class="form-control datetimepicker-input" id="starttime" name="starttime" readonly style=" display: inline-block; width: 200px;" placeholder="起始时间" data-toggle="datetimepicker" data-target="#starttime" autocomplete="off" />
+                </div>
+                <div style="position:relative;display:inline-block;">
+                    <input type='text' class="form-control datetimepicker-input" id="endtime" name="endtime" readonly style="display: inline-block;width:200px;" placeholder="截止时间" data-toggle="datetimepicker" data-target="#endtime" autocomplete="off" />
+                </div>
+                <button type="button" class="btn btn-primary" onclick="javascript: Search()">查询</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">注册邮箱</th>
+                            <th scope="col">金额(元)</th>
+                            <th scope="col">支付方式</th>
+                            <th scope="col">创建时间</th>
+                            <th scope="col">启用时间</th>
+                            <th scope="col">截止时间</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (vlst != null)
+                        {
+                            @foreach (var g in vlst)
+                            {
+                                <tr>
+                                    <td>@Project.GetDefaultVal(g, "Email")</td>
+                                    <td>@Project.GetDefaultVal(g, "Money")</td>
+                                    <td>@GetPayWay(Project.GetDefaultVal(g, "PayWay"))</td>
+                                    <td>@Project.GetDefaultVal(g, "CreateTime")</td>
+                                    <td>@Project.GetDefaultVal(g, "starttime")</td>
+                                    <td>@Project.GetDefaultVal(g, "endtime")</td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+                <nav aria-label="">
+
+                    @Html.Pager(alst, new PagerOptions
+               {
+                   FirstPageText = "首页",
+                   LastPageText = "上一页",
+                   PrevPageText = "下一页",
+                   NextPageText = "尾页",
+                   TagName = "ul",
+                   CssClass = "pagination",
+
+
+                   CurrentPagerItemTemplate = "<li class=\"page-item active\"><a class=\"page-link\" href''>{0}</a></li>",
+                   DisabledPagerItemTemplate = "<li class=\"page-item disabled\"><a class=\"page-link\" href''>{0}</a></li>",
+                   PagerItemTemplate = "<li class=\"page-item \">{0}</li>",
+                   PagerItemCssClass = "page-link"
+               })
+
+
+
+                </nav>
+
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            Search();
+        });
+        $('#starttime').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+        $('#endtime').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+
+
+    });
+
+    function Search() {
+        window.location.replace("/User/PayList?syslst=" + $("#syslst").val() + "&isuse=" + $("#State").val() + "&Email=" + $("#Email").val() + "&starttime=" + $("#starttime").val() + "&endtime=" + $("#endtime").val());
+    }
+
+
+
+</script>
+
+</html>

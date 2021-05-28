@@ -1,0 +1,10 @@
+sqlurlweb~Server=127.0.0.1;Port=3306;Database=sspclient;User=root;Password=superme1993;Character Set=utf8;
+sqlurlss~Server=127.0.0.1;Port=3306;Database=sspssr;User=root;Password=superme1993;Character Set=utf8;;
+Domain~https://www.textadmin.com
+SystemName~Test System
+PayWay~Bgp
+MugApiToken~
+BgpApiToken~
+BgpApiId~
+MITM_p12~
+MITM_passphrase~RixCloud

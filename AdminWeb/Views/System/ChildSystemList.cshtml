@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Child System List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "system" })
+
+    <div class="container">
+        <div class="row">
+            <div   style="float:left;padding:15px;">
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/System/ChildSystemDetail')">新增</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">系统名</th>
+                            <th scope="col">域名</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in syslst)
+                        {
+                            <tr>
+                                <td>@s.Cname</td>
+                                <td>@s.Domain</td>
+                                <td><a href="/System/ChildSystemDetail?cid=@s.Id" target="_self">编辑</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+
+</script>
+
+</html>

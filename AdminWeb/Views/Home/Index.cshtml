@@ -1,0 +1,91 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@{
+    Layout = null;
+    var regNum=ViewBag.regNum;
+    var actNum= ViewBag.actNum ;
+    var userInUseNum= ViewBag.userInUseNum ;
+    var userNum=  ViewBag.userNum ;
+    var ordernum= ViewBag.ordernum ;
+    var paymoney_today= ViewBag.paymoney_today ;
+    var paymoney_thismonth= ViewBag.paymoney_thismonth ;
+    var paymoney_lastmonth= ViewBag.paymoney_lastmonth ;
+    List<dynamic> syslst= ViewBag.syslst;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Ss New Panel Login</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel{
+            height:300px;
+            margin:10px;
+            border:1px solid #808080;
+            border-radius:5px;
+            padding:5px;
+        }
+    </style>
+ 
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "home" })
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4 col-sm-12">
+                <div class="panel">
+                    <h4>@(DateTime.Now.ToString("yyyy-MM-dd"))日完整统计</h4>
+                    <h6>今日注册总人数：@regNum</h6>
+                    <h6>今日激活总人数：@actNum</h6>
+                    <h6>当前付费用户总数：@userInUseNum</h6>
+                    <h6>系统注册用户总数：@userNum</h6>
+                    <h6>今日订单总数：@ordernum</h6>
+                    <h6>今日支付总金额：@(paymoney_today/100.00)元</h6>
+                    <h6>本月支付总金额：@(paymoney_thismonth/100.0)元</h6>
+                    <h6>上月支付总金额：@(paymoney_lastmonth/100.0)元</h6>
+                </div>
+            </div>
+            @if (syslst != null)
+            {
+                @foreach (var sys in syslst)
+                {
+                    <div class="col-lg-4 col-sm-12">
+                        <div class="panel">
+                            <h4>@(Project.GetDefaultVal(sys,"name"))统计</h4>
+                            <h6>今日注册总人数：@(Project.GetDefaultVal(sys, "regNum"))</h6>
+                            <h6>今日激活总人数：@(Project.GetDefaultVal(sys, "actNum"))</h6>
+                            <h6>当前付费用户总数：@(Project.GetDefaultVal(sys, "userInUseNum"))</h6>
+                            <h6>系统注册用户总数：@(Project.GetDefaultVal(sys, "userNum"))</h6>
+                            <h6>今日订单总数：@(Project.GetDefaultVal(sys, "ordernum"))</h6>
+                            <h6>今日支付总金额：@(Project.GetDefaultVal(sys, "paymoney_today") / 100.00)元</h6>
+                            <h6>本月支付总金额@(Project.GetDefaultVal(sys, "paymoney_thismonth") / 100.00)元</h6>
+                            <h6>上月支付总金额：@(Project.GetDefaultVal(sys, "paymoney_lastmonth") / 100.00)元</h6>
+                        </div>
+                    </div>
+                }
+            }
+
+
+           
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+
+</script>
+
+</html>

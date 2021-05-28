@@ -1,0 +1,144 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@using Webdiyer.AspNetCore;
+
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Preferentialcode> glst = ViewBag.List;
+
+    var Code = ViewBag.Code;
+
+    var IsUse = ViewBag.IsUse;
+    var IsDelete = ViewBag.IsDelete;
+    int count = ViewBag.Count;
+
+    int pageindex = ViewBag.pageindex;
+    int pagesize = ViewBag.pagesize;
+    var alst = new PagedList<Preferentialcode>(glst, pageindex, pagesize, count);
+
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Preferential Code List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "user" })
+
+    <div class="container">
+        <div class="row">
+            <div style="float:left;padding:15px;">
+                <select class="form-control" id="syslst" name="syslst" style="display: inline-block;width:auto;">
+                    @foreach (var sys in syslst)
+                    {
+                        <!option value="@(sys.Cname)"
+                                 @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                            @(sys.Cname)
+                        </!option>
+                    }
+                </select>
+                <select class="form-control" id="IsUse" name="IsUse" style="display: inline-block;width:auto;">
+                    <!option value="0" @(IsUse == "0" ? "selected" : "")>
+                        未使用
+                    </!option>
+                    <!option value="1" @(IsUse == "1" ? "selected" : "")>
+                        已使用
+                    </!option>
+
+                </select>
+
+
+
+                <input type="text" class="form-control" placeholder="请输入兑换码" name="Code" id="Code" aria-label="Code" aria-describedby="addon-wrapping" style=" display: inline-block; width: 200px;" value="@Code" />
+
+                <button type="button" class="btn btn-primary" onclick="javascript: Search()">查询</button>
+
+                <button type="button" class="btn btn-primary" onclick="javascript: Add()">新增</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">兑换码</th>
+                            <th scope="col">创建时间</th>
+                            <th scope="col">使用状态</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (glst != null)
+                        {
+                            @foreach (var g in glst)
+                            {
+                                <tr>
+                                    <td>@g.Code</td>
+                                    <td>@g.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td>@(g.IsUse==1?"已使用":"未使用")</td>
+                                    <td>
+                                        <a href="javascript:Open('@g.Id')" target="_self">编辑</a>
+                                        &nbsp;
+                                        <a href="javascript:Del('@g.Id')" target="_self">删除</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/user/PayCodeList?syslst=" + $("#syslst").val() + "&Code=" + $("#Code").val() + "&IsUse=" + $("#IsUse").val());
+        });
+    });
+    function Add() {
+        window.open("/user/PayCodeDetail?syslst=" + $("#syslst").val());
+    }
+    function Open(id) {
+        window.open("/user/PayCodeDetail?cid=" + id + "&syslst=" + $("#syslst").val());
+    }
+    function Del(id) {
+        if (confirm("是否确认删除？") == true) {
+            tPost("/user/PayCodeDeleteSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("删除成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+</script>
+
+</html>

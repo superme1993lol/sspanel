@@ -1,0 +1,223 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Vpnserver> vlst=ViewBag.vlst;
+    List<int> pvlst=ViewBag.pvlst;
+    var ProName = ViewBag.ProName;
+    var DurationDate = ViewBag.DurationDate;
+    var Traffic = ViewBag.Traffic;
+    var IsUse = ViewBag.IsUse;
+    var Price = ViewBag.Price;
+
+
+    var Description = ViewBag.Description;
+    var MaxOnlineUser = ViewBag.MaxOnlineUser;
+    var FlushTrafficDate = ViewBag.FlushTrafficDate;
+
+    var cid = ViewBag.cid;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Group Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "vpnserver" })
+
+    <div class="container">
+        <form id="fm" name="fm1" style="width:100%;">
+            <div class="row">
+
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">套餐名</span>
+                    </div>
+                    <input type="text" class="form-control" name="ProName" aria-label="输入套餐名" placeholder="输入套餐名" aria-describedby="inputGroup-sizing-default" value="@(ProName)">
+                </div>
+
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">套餐时间（天）</span>
+                    </div>
+                    <input type="number" class="form-control" name="DurationDate" aria-label="输入套餐时间（天）" placeholder="输入套餐时间（天）" aria-describedby="inputGroup-sizing-default" value="@(DurationDate)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">周期流量（G）</span>
+                    </div>
+                    <input type="number" class="form-control" name="Traffic" aria-label="输入周期流量" placeholder="输入周期流量" aria-describedby="inputGroup-sizing-default" value="@(Traffic)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">价格（元）</span>
+                    </div>
+                    <input type="number" class="form-control" name="Price" aria-label="输入价格（元）" placeholder="输入价格（元）" aria-describedby="inputGroup-sizing-default" value="@(Price)">
+                </div>
+
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">最大在线人数</span>
+                    </div>
+                    <input type="number" class="form-control" name="MaxOnlineUser" aria-label="输入最大在线人数" placeholder="输入最大在线人数" aria-describedby="inputGroup-sizing-default" value="@(MaxOnlineUser)">
+                </div>
+
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">流量刷新间隔天数</span>
+                    </div>
+                    <input type="number" class="form-control" name="FlushTrafficDate" aria-label="输入流量刷新间隔天数" placeholder="输入流量刷新间隔天数" aria-describedby="inputGroup-sizing-default" value="@(FlushTrafficDate)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">套餐说明</span>
+                    </div>
+                    <input type="text" class="form-control" name="Description" aria-label="输入套餐说明" placeholder="输入套餐说明" aria-describedby="inputGroup-sizing-default" value="@(Description)">
+                </div>
+
+
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">是否可用</span>
+                    </div>
+                    <select class="form-control" id="IsUse" name="IsUse">
+                        <!option value="1"
+                                 @Html.Raw((IsUse == (short)1 || IsUse == null) ? "selected" : "")>
+                            是
+                        </!option>
+                        <!option value="0"
+                                 @Html.Raw(IsUse == (short)0 ? "selected" : "")>
+                            否
+                        </!option>
+                    </select>
+                </div>
+
+                <input type="hidden" name="cid" value="@cid" />
+
+            </div>
+            <div class="row">
+                <div class="col" style="padding:5px;">
+                    <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/Package/List?syslst=' + $('#syslst').val())">返回</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                <input type="checkbox" class="form-check-input" id="ckAll">
+                                <label class="form-check-label" for="ckAll">全选</label>
+                            </th>
+                            <th scope="col">服务器</th>
+                            <th scope="col">所属地区</th>
+                            <th scope="col">状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (vlst != null)
+                        {
+                            @foreach (var v in vlst)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <input type="checkbox" class="chk" name="ck_@(v.Id)" id="ck_@(v.Id)" @((pvlst != null && pvlst.Contains(v.Id)) ? "checked='checked'" : "") />
+                                    </th>
+                                    <td>@v.ServerName</td>
+                                    <td>@Project.GetCountryName(v.Country)</td>
+                                    <td>@(v.IsUse==1?"在用":"停用")</td>
+                                </tr>
+                            }
+                        }
+
+
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </form>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/Package/Detail?syslst=" + $("#syslst").val());
+        });
+
+        $("#ckAll").change(function () { 
+             
+            if ($("#ckAll").is(":checked")) {
+                $(".chk").prop("checked", true) ;
+            }
+            else {
+                $(".chk").prop("checked", false);
+            }
+        });
+    })
+
+    function SubmitInfo() {
+        tPost("/Package/DetailSubmit?" + Math.random(), $("#fm").serialize(), function (rt) {
+            debugger
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功", function () { window.location.href = "/Package/List?syslst=" + $("#syslst").val() });
+            }
+            return;
+        }); 
+    }
+</script>
+
+</html>

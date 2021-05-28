@@ -1,0 +1,214 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@using Webdiyer.AspNetCore;
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Vpnserver> vlst = ViewBag.List;
+    List<Project.VPNCountry> clst = ViewBag.clst;
+    var country = ViewBag.country;
+    var isuse = ViewBag.isuse;
+    var ProxyType = ViewBag.ProxyType;
+    int count = ViewBag.Count;
+    var ServerName = ViewBag.ServerName;
+    int pageindex = ViewBag.pageindex;
+    int pagesize = ViewBag.pagesize;
+    var alst = new PagedList<Vpnserver>(vlst, pageindex, pagesize, count);
+}
+ 
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Server List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "vpnserver" })
+
+    <div class="container">
+        <div class="row">
+            <div style="float:left;padding:15px;">
+
+                <select class="form-control" id="syslst" name="syslst" style="display: inline-block;width:auto;">
+                    @foreach (var sys in syslst)
+                    {
+                        <!option value="@(sys.Cname)"
+                                 @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                            @(sys.Cname)
+                        </!option>
+                    }
+                </select>
+
+                <select class="form-control" id="country" name="country" style="display: inline-block;width:auto;">
+                    <option value="">
+                        地区
+                    </option>
+                    @foreach (var c in clst)
+                    {
+                        <!option value="@(c.Id)"
+                                 @Html.Raw(c.Id == country ? "selected" : "")>
+                            @(c.CnName)
+                        </!option>
+                    }
+                </select>
+
+                <select class="form-control" id="ProxyType" name="ProxyType" style="display: inline-block;width:auto;">
+                    <!option value=""  >
+                        类型
+                    </!option>
+                    <!option value="ss" @(ProxyType == "ss" ? "selected" : "")>
+                        SS
+                    </!option>
+                    <!option value="ssr" @(ProxyType == "ssr" ? "selected" : "")>
+                        SSR
+                    </!option>
+                </select>
+
+                <select class="form-control" id="isuse" name="isuse" style="display: inline-block;width:auto;">
+                    <!option value="1" @(isuse == "1" ? "selected" : "")>
+                        在用
+                    </!option>
+                    <!option value="0" @(isuse == "0" ? "selected" : "")>
+                        停用
+                    </!option>
+                </select>
+
+                <input type="text" class="form-control" placeholder="服务器名" name="ServerName" id="ServerName" aria-label="ServerName" aria-describedby="addon-wrapping" style=" display: inline-block; width: 200px;" value="@ServerName" />
+
+                <button type="button" class="btn btn-primary" onclick="javascript: Search()">查询</button>
+                <button type="button" class="btn btn-primary" onclick="javascript: AddServer()">新增</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">服务器名</th>
+                            <th scope="col">类型</th>
+                            <th scope="col">所属国家</th>
+                            <th scope="col">是否可用</th>
+                            <th scope="col">端口号</th>
+                            <th scope="col">密码</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (vlst != null)
+                        {
+                            @foreach (var g in vlst)
+                            {
+                        <tr>
+                            <td>@g.ServerName</td>
+                            <td>@g.ProxyType</td>
+                            <td>@Project.GetCountryName(g.Country)</td>
+                            <td>@(g.IsUse==1?"是":"否")</td>
+                            <td>@g.Port</td>
+                            <td>@g.Passwd</td>
+                            <td>
+                                <a href="javascript:OpenServer('@g.Id')" target="_self">编辑</a>
+                                &nbsp;
+                                <a href="javascript:ChangeServer('@g.Id')" target="_self">@(g.IsUse==1?"停用":"启用")</a> 
+                                &nbsp; 
+                                <a href="javascript:DelServer('@g.Id')" target="_self">删除</a>
+                            </td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+                <nav aria-label="">
+
+                    @Html.Pager(alst, new PagerOptions
+               {
+                   FirstPageText = "首页",
+                   LastPageText = "上一页",
+                   PrevPageText = "下一页",
+                   NextPageText = "尾页",
+                   TagName = "ul",
+                   CssClass = "pagination",
+
+
+                   CurrentPagerItemTemplate = "<li class=\"page-item active\"><a class=\"page-link\" href''>{0}</a></li>",
+                   DisabledPagerItemTemplate = "<li class=\"page-item disabled\"><a class=\"page-link\" href''>{0}</a></li>",
+                   PagerItemTemplate = "<li class=\"page-item \">{0}</li>",
+                   PagerItemCssClass = "page-link"
+               })
+
+
+
+                </nav>
+
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            Search();
+        });
+    });
+    function AddServer() {
+        window.open("/VpnServer/ServerDetail?syslst=" + $("#syslst").val());
+    }
+    function OpenServer(id) {
+        window.open("/VpnServer/ServerDetail?cid=" + id + "&syslst=" + $("#syslst").val());
+    }
+    function Search() {
+        window.location.replace("/VpnServer/ServerList?syslst=" + $("#syslst").val() + "&ServerName=" + $("#ServerName").val() + "&country=" + $("#country").val() + "&isuse=" + $("#isuse").val() + "&ProxyType=" + $("#ProxyType").val());
+    }
+
+    function ChangeServer(id) {
+        if (confirm("是否确认修改？") == true) {
+            tPost("/VpnServer/ChangeServerSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("修改成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+
+    function DelServer(id) {
+        if (confirm("是否确认删除？") == true) {
+            tPost("/VpnServer/DeleteServerSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("删除成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+</script>
+
+</html>

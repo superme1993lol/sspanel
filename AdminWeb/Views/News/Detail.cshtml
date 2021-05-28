@@ -1,0 +1,121 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+   
+    var Title = ViewBag.Title;
+    var Content = ViewBag.Content; 
+
+    var cid = ViewBag.cid;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>News Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "news" })
+
+    <div class="container">
+        <form id="fm" name="fm1" style="width:100%;">
+            <div class="row">
+
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">标题</span>
+                    </div>
+                    <input type="text" class="form-control" name="Title" aria-label="输入标题" placeholder="输入标题" aria-describedby="inputGroup-sizing-default" value="@(Title)">
+                </div>
+
+ 
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">内容</span>
+                    </div>
+                    <textarea type="text" class="form-control" id="Content" name="Content" aria-label="输入文本内容" placeholder="输入文本内容" aria-describedby="inputGroup-sizing-default" >@Content</textarea>
+                </div>
+                 
+              
+
+                <input type="hidden" name="cid" value="@cid" />
+
+            </div>
+            <div class="row">
+                <div class="col" style="padding:5px;">
+                    <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+                    &nbsp; &nbsp; &nbsp;
+                    <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/Package/List?syslst=' + $('#syslst').val())">返回</button>
+                </div>
+            </div>
+ 
+
+        </form>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/News/Detail?syslst=" + $("#syslst").val());
+        });
+ 
+    })
+
+    function SubmitInfo() {
+        tPost("/News/DetailSubmit?" + Math.random(), $("#fm").serialize(), function (rt) {
+            debugger
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功", function () { window.location.href = "/News/List?syslst=" + $("#syslst").val() });
+            }
+            return;
+        });
+    }
+</script>
+
+</html>

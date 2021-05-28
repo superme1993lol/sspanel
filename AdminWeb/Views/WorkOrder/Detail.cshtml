@@ -1,0 +1,205 @@
+﻿
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+
+    var cid = ViewBag.cid;
+
+
+    var CreateTime = ViewBag.CreateTime;
+    var State = ViewBag.State;
+    var Email = ViewBag.Email;
+    var Content = ViewBag.Content;
+
+    List<Workorderdetail> wd = ViewBag.wd;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Work Order Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "workorder" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm" style="width:100%;">
+                <div class="input-group mb-3 " style="display:none;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">反馈人</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="Email" aria-describedby="inputGroup-sizing-default" value="@(Email)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">创建时间</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="CreateTime" aria-describedby="inputGroup-sizing-default" value="@(CreateTime)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">问题描述</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="Content" aria-describedby="inputGroup-sizing-default" value="@(Content)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">状态</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="State" aria-describedby="inputGroup-sizing-default" value="@(State==1?"正在处理":"已关闭")">
+                </div>
+
+
+
+            </form>
+        </div>
+
+        <div class="row">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">对话内容</th>
+                        <th scope="col">时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (wd != null)
+                    {
+                        @foreach (var v in wd)
+                        {
+                            <tr>
+                                <td style="text-align:left; @(v.WodType==1?"font:bold":"")">@(v.WodType==1?"客户：":"回复：") @v.Content</td>
+                                <td>@v.CreateTime.ToStr("yyyy-MM-dd HH:mm:ss")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (State == 1)
+        {
+            <div class="row">
+                <form id="fm1" name="fm1" style="width:100%;">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">回复内容</span>
+                        </div>
+                        <textarea class="form-control" name="ReplyContent" id="ReplyContent" aria-label="回复内容"></textarea>
+                    </div>
+                    <input type="hidden" id="cid" name="cid" value="@cid" />
+                </form>
+            </div>
+        }
+        <div class="row">
+            <div class="col" style="padding:5px;">
+
+
+                @if (State == 1)
+                {
+                    <button type="button" class="btn btn-primary" onclick="ReplySubmit()">
+                        提交回复
+                    </button>
+                    @Html.Raw("&nbsp; &nbsp; &nbsp;")
+                    <button type="button" class="btn btn-primary" onclick="CloseOrder()">
+                        关闭工单
+                    </button>
+                    @Html.Raw("&nbsp; &nbsp; &nbsp;")
+                }
+
+
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/WorkOrder/List?syslst=' + $('#syslst').val())">返回</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/WorkOrder/Detail?cid=@(cid)syslst=" + $("#syslst").val());
+        });
+    });
+    function ReplySubmit() {
+        var id = $("#cid").val();
+        if ($("#ReplyContent").val() == "") {
+            tMsg("请输入回复内容");
+            return;
+        }
+        if (confirm("是否确认提交？") == true) {
+            tPost("/WorkOrder/ReplySubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), $("#fm1").serialize(), function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("提交成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+    function CloseOrder() {
+        var id = $("#cid").val();
+        if (confirm("是否确认关闭？") == true) {
+            tPost("/WorkOrder/CloseOrderSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("关闭成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+
+
+</script>
+
+</html>

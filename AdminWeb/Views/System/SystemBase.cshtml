@@ -1,0 +1,101 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Model;
+@using Model.client;
+@using Model.admin;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Systembase> kvlst = ViewBag.kvlst;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>System Base Info</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "system" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm1" style="width:100%;">
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"  
+                                    @Html.Raw(sys.Cname== sysname?"selected":"")
+                                    >@(sys.Cname)</!option>
+                        }
+                    </select>
+                </div>
+                @foreach (var kv in kvlst)
+                {
+                    <div class="input-group mb-3 ">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">@kv.Description</span>
+                        </div>
+                        <input type="text" class="form-control" name="si_@kv.Key" value="@kv.Value" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                }
+
+            </form>
+        </div>
+        <div class="row">
+            <div class="col" style="padding:5px;">
+                <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/System/SystemBase?syslst=" + $("#syslst").val());
+        });
+    });
+    function SubmitInfo() {
+        tPost("/System/SystemBaseSubmit?" + Math.random(), $("#fm").serialize(), function (rt) {
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功");
+            }
+            return;
+        }); 
+    }
+</script>
+
+</html>

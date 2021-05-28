@@ -1,0 +1,261 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+     List<Project.VPNCountry> clst = ViewBag.clst;
+
+    var cid = ViewBag.cid;
+
+    var ServerName = ViewBag.ServerName;
+    var Country = ViewBag.Country;
+    var IsUse = ViewBag.IsUse;
+  
+    var Port = ViewBag.Port;
+    var Passwd = ViewBag.Passwd;
+    var Method = ViewBag.Method;
+    var Obfs = ViewBag.Obfs;
+    var Protocol = ViewBag.Protocol;
+    var ProxyType = ViewBag.ProxyType;
+    var Domain = ViewBag.Domain;
+    var Weight = ViewBag.Weight;
+
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Server Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "vpnserver" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm1" style="width:100%;">
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">服务器名</span>
+                    </div>
+                    <input type="text" class="form-control" name="ServerName" aria-label="输入服务器名" placeholder="输入服务器名" aria-describedby="inputGroup-sizing-default" value="@(ServerName)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">端口号</span>
+                    </div>
+                    <input type="text" class="form-control" name="Port" aria-label="输入端口号" placeholder="输入端口号" aria-describedby="inputGroup-sizing-default" value="@(Port)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">权重</span>
+                    </div>
+                    <input type="text" class="form-control" name="Weight" aria-label="输入数字，数字越小排名越靠前" placeholder="输入数字，数字越小排名越靠前" aria-describedby="inputGroup-sizing-default" value="@(Weight)">
+                </div>
+
+                <div class="input-group mb-3  " style="display:none;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">域名地址</span>
+                    </div>
+                    <input type="text" class="form-control" name="Domain" aria-label="输入域名地址" placeholder="输入域名地址" aria-describedby="inputGroup-sizing-default" value="@(Domain)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">服务器密码</span>
+                    </div>
+                    <input type="text" class="form-control" name="Passwd" aria-label="输入服务器密码" placeholder="输入服务器密码" aria-describedby="inputGroup-sizing-default" value="@(Passwd)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">节点类型</span>
+                    </div>
+                    <select class="form-control" id="ProxyType" name="ProxyType">
+                        <!option value="ss" @(ProxyType == "ss" ? "selected" : "")>
+                            SS
+                        </!option>
+                        <!option value="ssr" @(ProxyType == "ssr" ? "selected" : "")>
+                            SSR
+                        </!option>
+                    </select>
+                </div>
+
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">Method</span>
+                    </div>
+                    <select class="form-control" id="Method" name="Method">
+                        <!option value="aes-256-cfb" @(Method == "aes-256-cfb" ? "selected" : "")>
+                            aes-256-cfb
+                        </!option>
+                        <!option value="aes-128-cfb" @(Method == "aes-128-cfb" ? "selected" : "")>
+                            aes-128-cfb
+                        </!option>
+                        <!option value="chacha20" @(Method == "chacha20" ? "selected" : "")>
+                            chacha20
+                        </!option>
+                        <!option value="chacha20-ietf" @(Method == "chacha20-ietf" ? "selected" : "")>
+                            chacha20-ietf
+                        </!option>
+                        <!option value="aes-256-gcm" @(Method == "aes-256-gcm" ? "selected" : "")>
+                            aes-256-gcm
+                        </!option>
+                        <!option value="aes-128-gcm" @(Method == "aes-128-gcm" ? "selected" : "")>
+                            aes-128-gcm
+                        </!option>
+                        <!option value="chacha20-poly1305" @(Method == "chacha20-poly1305" ? "selected" : "")>
+                            chacha20-poly1305
+                        </!option>
+                        <!option value="chacha20-ietf-poly1305" @(Method == "chacha20-ietf-poly1305" ? "selected" : "")>
+                            chacha20-ietf-poly1305
+                        </!option>
+                    </select>
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">Obfs</span>
+                    </div>
+                    <select class="form-control" id="Obfs" name="Obfs">
+                        <!option value="plain" @(Obfs == "plain" ? "selected" : "")>
+                            plain
+                        </!option>
+                        <!option value="http" @(Obfs == "http" ? "selected" : "")>
+                            http
+                        </!option>
+                        <!option value="tls" @(Obfs == "tls" ? "selected" : "")>
+                            tls
+                        </!option>
+                    </select>
+                </div>
+
+
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">Protocol</span>
+                    </div>
+                    <select class="form-control" id="Protocol" name="Protocol">
+                        <!option value="origin" @(Protocol == "origin" ? "selected" : "")>
+                            origin
+                        </!option>
+                        <!option value="auth_aes128_sha1" @(Protocol == "auth_aes128_sha1" ? "selected" : "")>
+                            auth_aes128_sha1
+                        </!option>
+                        <!option value="auth_aes128_md5" @(Protocol == "auth_aes128_md5" ? "selected" : "")>
+                            auth_aes128_md5
+                        </!option>
+                    </select>
+                </div>
+
+
+               
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择地区</span>
+                    </div>
+                    <select class="form-control" id="country" name="country">
+                        @foreach (var g in clst)
+                        {
+                            <!option value="@(g.Id)"
+                                     @Html.Raw(g.Id == Country ? "selected" : "")>
+                                @(g.CnName)
+                            </!option>
+                        }
+                    </select>
+                </div>
+                <div class="input-group mb-3 ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">是否可用</span>
+                    </div>
+                    <select class="form-control" id="IsUse" name="IsUse">
+                        <!option value="1" @(IsUse == (short)1 ? "selected" : "")>
+                            在用
+                        </!option>
+                        <!option value="0" @(IsUse == (short)0 ? "selected" : "")>
+                            停用
+                        </!option>
+                    </select>
+                </div>
+
+
+                <input type="hidden" name="cid" value="@cid" />
+            </form>
+        </div>
+        <div class="row">
+            <div class="col" style="padding:5px;">
+                <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/VpnServer/ServerList?syslst=' + $('#syslst').val())">返回</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/VpnServer/ServerDetail?syslst=" + $("#syslst").val());
+        });
+    });
+    function SubmitInfo() {
+        tPost("/VpnServer/ServerDetailSubmit?" + Math.random(), $("#fm").serialize(), function (rt) {
+            debugger
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功", function () { window.location.href = "/VpnServer/ServerList?syslst=" + $("#syslst").val() });
+            }
+            return;
+        });
+
+    }
+</script>
+
+</html>

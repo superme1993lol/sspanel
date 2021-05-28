@@ -1,0 +1,150 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>{SystemName} - Index</title>
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        html {
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 16px;
+            }
+        }
+
+        .container {
+            max-width: 960px;
+        }
+
+        .pricing-header {
+            max-width: 700px;
+        }
+
+        .card-deck .card {
+            min-width: 220px;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+        <h5 class="my-0 mr-md-auto font-weight-normal">{SystemName}</h5>
+        <nav class="my-2 my-md-0 mr-md-3" id="userinfoView" style="display:none;">
+            <a class="p-2 text-dark" href="/User/Main" id="userinfo"></a>
+            <a class="p-2 text-dark" href="/User/LoginOut" id="loginout">退出登录</a>
+        </nav>
+
+
+
+        <a class="btn btn-outline-primary" id="login" href="/User/Login">登录</a>
+    </div>
+
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">产品介绍</h1>
+        <p class="lead">一款神奇的网络加速器，世界各地的网络节点为您提供高速访问的体验</p>
+    </div>
+
+    <div class="container">
+        <div class="card-deck mb-3 text-center" id="price">
+             
+        </div>
+
+        <!--<footer class="pt-4 my-md-5 pt-md-5 border-top">
+            <div class="row">
+                <div class="col-12 col-md">
+                    <img class="mb-2" src="/assets/bootstrap/brand/bootstrap-solid.svg" alt="" width="24" height="24">
+                    <small class="d-block mb-3 text-muted">&copy; 2017-2021</small>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Features</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Cool stuff</a></li>
+                        <li><a class="text-muted" href="#">Random feature</a></li>
+                        <li><a class="text-muted" href="#">Team feature</a></li>
+                        <li><a class="text-muted" href="#">Stuff for developers</a></li>
+                        <li><a class="text-muted" href="#">Another one</a></li>
+                        <li><a class="text-muted" href="#">Last time</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>Resources</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Resource</a></li>
+                        <li><a class="text-muted" href="#">Resource name</a></li>
+                        <li><a class="text-muted" href="#">Another resource</a></li>
+                        <li><a class="text-muted" href="#">Final resource</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md">
+                    <h5>About</h5>
+                    <ul class="list-unstyled text-small">
+                        <li><a class="text-muted" href="#">Team</a></li>
+                        <li><a class="text-muted" href="#">Locations</a></li>
+                        <li><a class="text-muted" href="#">Privacy</a></li>
+                        <li><a class="text-muted" href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+        </footer>-->
+    </div>
+     
+    {foot}
+
+    <script>
+        $(function () {
+            tGet("/User/GetCurrentUser", function (rt) {
+                var r = JSON.parse(rt); 
+                if (r.Msg && r.Msg != "") {
+                    $("#userinfo").html(r.Msg);
+                    $("#userinfoView").show();
+                    $("#login").hide();
+                }
+                else {
+                    $("#userinfoView").hide();
+                    $("#login").show();
+                }
+            });
+            tGet("/Home/GetAllProduct", function (rt) {
+                var rr = JSON.parse(rt);
+                var html = "";
+                for (var i = 0; i < rr.length; i++) {
+                    var r = rr[i];
+                    html += '<div class="card mb-4 shadow-sm"><div class="card-header" ><h4 class="my-0 font-weight-normal">' + r.ProName + '</h4></div><div class="card-body"><h1 class="card-title pricing-card-title">' + r.Price + ' <small class="text-muted"> 元</small></h1><ul class="list-unstyled mt-3 mb-4"><li>同时可容纳' + r.MaxOnlineUser + '人在线</li><li>每月可用' + r.Traffic + 'G流量</li><li>支持手机、PC、Mac设备</li><li>7*24在线客服</li></ul><button type="button" class="btn btn-lg btn-block btn-primary" onclick="window.location.href=\'/User/AddService?id=' + r.Id+'\'">点击购买</button></div></div >'; 
+                }
+                $("#price").html(html);
+            });
+            
+        });
+    </script>
+</body>
+</html>

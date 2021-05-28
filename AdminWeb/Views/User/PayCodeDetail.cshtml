@@ -1,0 +1,150 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Product> plst = ViewBag.plst; 
+    var cid = ViewBag.cid; 
+    var Code = ViewBag.Code;
+    var CreateTime = ViewBag.CreateTime;
+    var IsUse = ViewBag.IsUse;
+    var IsDelete = ViewBag.IsDelete;
+    var Member = ViewBag.Member;
+    var UseTime = ViewBag.UseTime;
+    
+    var ProId = ViewBag.ProId;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Preferential Code Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+     
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "user" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm1" style="width:100%;">
+                <div class="input-group mb-3 " style="display:none;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">兑换码</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" aria-describedby="inputGroup-sizing-default" value="@(Code)">
+                </div>
+                <div class="input-group mb-3 " >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择对应服务</span>
+                    </div>
+                    <select class="form-control" id="Product" name="Product">
+                        @foreach (var p in plst)
+                        {
+                            <!option value="@(p.Id)"
+                                     @Html.Raw(p.Id == ProId ? "selected" : "")>
+                                @(p.ProName)
+                            </!option>
+                        }
+                    </select>
+                </div>
+
+                @if (cid != null)
+                {
+                    <div class="input-group mb-3  ">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">状态</span>
+                        </div>
+                        <input type="text" class="form-control" disabled="disabled" aria-describedby="inputGroup-sizing-default" value="@(IsUse+Member+UseTime+IsDelete)">
+                    </div>
+
+                    <div class="input-group mb-3  ">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">创建时间</span>
+                        </div>
+                        <input type="text" class="form-control" disabled="disabled" aria-describedby="inputGroup-sizing-default" value="@(CreateTime)">
+                    </div>
+                }
+
+
+
+                <input type="hidden" id="cid" name="cid" value="@cid" />
+            </form>
+        </div>
+        <div class="row">
+            <div class="col" style="padding:5px;">
+                @if (IsUse == null || IsUse == "未使用")
+                {
+                    <button type="button" class="btn btn-primary" onclick="SubmitInfo()">保存</button>
+                }
+
+
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/User/PayCodeList?syslst=' + $('#syslst').val())">返回</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/User/PayCodeDetail?cid=@(cid)syslst=" + $("#syslst").val());
+        });
+    });
+    function SubmitInfo() {
+        tPost("/User/PayCodeDetailSubmit?" + Math.random(), $("#fm").serialize(), function (rt) { 
+            var rr = JSON.parse(rt);
+            if (rr.Msg != "") {
+                tMsg(rr.Msg);
+            }
+            else {
+                tMsg("保存成功", function () { window.location.href = "/User/PayCodeList?syslst=" + $("#syslst").val() });
+            }
+            return;
+        });
+
+    }
+</script>
+
+</html>

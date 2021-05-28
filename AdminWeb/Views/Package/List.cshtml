@@ -1,0 +1,157 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client; 
+@{
+    Layout = null;
+
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname;
+    List<Product> plst = ViewBag.List;
+    var isuse = ViewBag.isuse;
+    var ProName = ViewBag.ProName;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Product List</title>
+    @Html.Partial("_Head")
+
+    <style>
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "package" })
+
+    <div class="container">
+        <div class="row">
+            <div style="float:left;padding:15px;">
+
+                <select class="form-control" id="syslst" name="syslst" style="display: inline-block;width:auto;">
+                    @foreach (var sys in syslst)
+                    {
+                        <!option value="@(sys.Cname)"
+                                 @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                            @(sys.Cname)
+                        </!option>
+                    }
+                </select>
+                 
+                <select class="form-control" id="isuse" name="isuse" style="display: inline-block;width:auto;">
+                    <!option value="1" @(isuse == "1" ? "selected" : "")>
+                        在用
+                    </!option>
+                    <!option value="0" @(isuse == "0" ? "selected" : "")>
+                        停用
+                    </!option>
+                </select>
+
+                <input type="text" class="form-control" placeholder="套餐名" name="ProName" id="ProName" aria-label="ProName" aria-describedby="addon-wrapping" style=" display: inline-block; width: 200px;" value="@ProName" />
+
+                <button type="button" class="btn btn-primary" onclick="javascript: Search()">查询</button>
+                <button type="button" class="btn btn-primary" onclick="javascript: AddProduct()">新增</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">套餐名</th>
+                            <th scope="col">流量(G)</th>
+                            <th scope="col">价格</th>
+                            <th scope="col">时间（天）</th>
+                            <th scope="col">是否在用</th>
+                            <th scope="col">最大在线人数</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (plst != null)
+                        {
+                            @foreach (var g in plst)
+                            {
+                        <tr>
+                            <td>@g.ProName</td>
+                            <td>@(g.Traffic/(1024*1024*1024))</td>
+                            <td>@(g.Price/100.0)</td>
+                            <td>@g.DurationDate</td>
+                            <td>@(g.IsUse==1?"是":"否")</td>
+                            <td>@g.MaxOnlineUser</td>
+                            <td>
+                                <a href="javascript:OpenProduct('@g.Id')" target="_self">编辑</a>
+                                &nbsp;
+                                <a href="javascript:Change('@g.Id')" target="_self">@(g.IsUse==1?"停用":"启用")</a>
+                                &nbsp;
+                                <a href="javascript:Del('@g.Id')" target="_self">删除</a>
+                            </td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            Search();
+        });
+    });
+    function AddProduct() {
+        window.open("/Package/Detail?syslst=" + $("#syslst").val());
+    }
+    function OpenProduct(id) {
+        window.open("/Package/Detail?cid=" + id + "&syslst=" + $("#syslst").val());
+    }
+    function Search() {
+        window.location.replace("/Package/List?syslst=" + $("#syslst").val() + "&ProName=" + $("#ProName").val() + "&isuse=" + $("#isuse").val());
+    }
+    function Del(id) {
+        if (confirm("是否确认删除？") == true) {
+            myPost("/Package/DeleteSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    myMsg(rr.Msg);
+                }
+                else {
+                    myMsg("删除成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        } 
+    }
+
+    function Change(id) {
+        if (confirm("是否确认修改？") == true) {
+            myPost("/Package/ChangeSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    myMsg(rr.Msg);
+                }
+                else {
+                    myMsg("修改成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+</script>
+
+</html>

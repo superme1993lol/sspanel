@@ -1,0 +1,225 @@
+﻿ 
+@using AdminWeb.core;
+@using Model.admin;
+@using Model.client;
+@{
+    Layout = null;
+    List<Childsystem> syslst = ViewBag.syslst;
+    var sysname = ViewBag.sysname; 
+    List<Project.VPNCountry> clst = ViewBag.clst;
+
+    var cid = ViewBag.cid;
+
+
+    var Account= ViewBag.Account ;
+    var CreateTime=ViewBag.CreateTime;
+    var IsUse= ViewBag.IsUse;
+    var IsRegist= ViewBag.IsRegist;
+    var IsMailSend= ViewBag.IsMailSend;
+    var Email= ViewBag.Email;
+    var NickName= ViewBag.NickName ; 
+    List<Memberservice> lstms = ViewBag.ms;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>Server Detail</title>
+    @Html.Partial("_Head")
+
+    <style>
+        .panel {
+            height: 300px;
+            margin: 10px;
+            border: 1px solid #808080;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+
+</head>
+<body class="text-center">
+
+    @Html.Partial("_Top", new { active = "user" })
+
+    <div class="container">
+
+        <div class="row">
+            <form id="fm" name="fm1" style="width:100%;">
+                <div class="input-group mb-3 " style="display:none;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">请选择子系统</span>
+                    </div>
+                    <select class="form-control" id="syslst" name="syslst">
+                        @foreach (var sys in syslst)
+                        {
+                            <!option value="@(sys.Cname)"
+                                     @Html.Raw(sys.Cname == sysname ? "selected" : "")>
+                                @(sys.Cname)
+                            </!option>
+                        }
+                    </select>
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">账户名</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" aria-describedby="inputGroup-sizing-default" value="@(Account)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">邮箱</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="Email" aria-describedby="inputGroup-sizing-default" value="@(Email)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">昵称</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="NickName" aria-describedby="inputGroup-sizing-default" value="@(NickName)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">创建时间</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="CreateTime" aria-describedby="inputGroup-sizing-default" value="@(CreateTime)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">邮件发送状态</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="IsMailSend" aria-describedby="inputGroup-sizing-default" value="@(IsMailSend)">
+                </div>
+
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">注册状态</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="IsRegist" aria-describedby="inputGroup-sizing-default" value="@(IsRegist)">
+                </div>
+                <div class="input-group mb-3  ">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">账户状态</span>
+                    </div>
+                    <input type="text" class="form-control" disabled="disabled" name="IsUse" aria-describedby="inputGroup-sizing-default" value="@(IsUse)">
+                </div>
+
+                @if (lstms != null)
+                {
+                    var i = 1;
+                    foreach (var ms in lstms)
+                    {
+                        i++;
+                        <div class="input-group mb-3  ">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default" style="width:250px;">服务@(i)</span>
+                            </div>
+                            <input type="text" class="form-control" disabled="disabled" name="ms" aria-describedby="inputGroup-sizing-default" value="@("时间："+ms.StartTime.ToString("yyyy-MM-dd")+"~"+ms.EndTime.ToString("yyyy-MM-dd")+",流量:"+ms.Traffic/(1024*1024*1024)+"G,最大在线人数:"+ms.MaxOnlineUser+",SS端口:"+ms.Ssport+",SS密码:"+ms.Sspwd)">
+                        </div>
+                    }
+
+
+                }
+
+
+                <input type="hidden" id="cid" name="cid" value="@cid" />
+            </form>
+        </div>
+        <div class="row">
+            <div class="col" style="padding:5px;">
+                @if (IsMailSend == "未发送")
+                {
+                    <button type="button" class="btn btn-primary" onclick="SendEmail()">发送注册邮件</button>
+                    @Html.Raw("&nbsp; &nbsp; &nbsp;")
+                }
+                @if (IsRegist == "未激活")
+                {
+                    <button type="button" class="btn btn-primary" onclick="Active()">手动激活</button>
+                    @Html.Raw("&nbsp; &nbsp; &nbsp;")
+                }
+
+            <button type="button" class="btn btn-primary" onclick="Change()">
+                @if (IsUse == "在用")
+                {
+                    @Html.Raw("停用")
+                }
+                else
+                {
+                    @Html.Raw("启用")
+                }
+            </button>
+
+                &nbsp; &nbsp; &nbsp;
+                <button type="button" class="btn btn-primary" onclick="javascript: window.location.href=('/User/UserList?syslst=' + $('#syslst').val())">返回</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</body>
+@Html.Partial("_Foot")
+<script>
+    $(function () {
+        $("#syslst").change(function () {
+            window.location.replace("/User/UserDetail?cid=@(cid)syslst=" + $("#syslst").val());
+        });
+    });
+    function Change() {
+        var id = $("#cid").val();
+        if (confirm("是否确认修改？") == true) {
+            tPost("/User/ChangeUserSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("修改成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+
+
+    function Active() {
+        var id = $("#cid").val();
+        if (confirm("是否确认激活？") == true) {
+            tPost("/User/ActiveUserSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("激活成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+
+    function SendEmail() {
+        var id = $("#cid").val();
+        if (confirm("是否确认重新发送？") == true) {
+            tPost("/User/SendEmailUserSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+                var rr = JSON.parse(rt);
+                if (rr.Msg != "") {
+                    tMsg(rr.Msg);
+                }
+                else {
+                    tMsg("发送成功", function () { window.location.reload(); });
+                }
+                return;
+            });
+        }
+    }
+</script>
+
+</html>
