@@ -125,13 +125,13 @@
     }
     function Del(id) {
         if (confirm("是否确认删除？") == true) {
-            myPost("/Package/DeleteSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+            tPost("/Package/DeleteSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
                 var rr = JSON.parse(rt);
                 if (rr.Msg != "") {
-                    myMsg(rr.Msg);
+                    tMsg(rr.Msg);
                 }
                 else {
-                    myMsg("删除成功", function () { window.location.reload(); });
+                    tMsg("删除成功", function () { window.location.reload(); });
                 }
                 return;
             });
@@ -140,13 +140,13 @@
 
     function Change(id) {
         if (confirm("是否确认修改？") == true) {
-            myPost("/Package/ChangeSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
+            tPost("/Package/ChangeSubmit?" + Math.random() + "&cid=" + id + "&syslst=" + $("#syslst").val(), null, function (rt) {
                 var rr = JSON.parse(rt);
                 if (rr.Msg != "") {
-                    myMsg(rr.Msg);
+                    tMsg(rr.Msg);
                 }
                 else {
-                    myMsg("修改成功", function () { window.location.reload(); });
+                    tMsg("修改成功", function () { window.location.reload(); });
                 }
                 return;
             });
